@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Friend {
+  id              String   @id @default(cuid())
+  name            String
+  nickname        String?
+  bio             String?
+  avatarUrl       String?
+  childhoodUrl    String?
+  favoritePicnic  String?
+  favoriteLocation String?
+  favoriteFood    String?
+  funFacts        String   @default("[]")
+  funnyHabits     String   @default("[]")
+  awards          String   @default("[]")
+  photoCount      Int      @default(0)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  photos    Photo[]
+  stories   Story[]
+  picnics   PicnicFriend[]
+}
+
+model Picnic {
+  id              String   @id @default(cuid())
+  year            Int
+  title           String
+  date            String?
+  location        String
+  locationLat     Float?
+  locationLng     Float?
+  weather         String?
+  temperature     String?
+  season          String?
+  budget          Float?
+  travelDistance   Float?
+  transportation  String?
+  food            String?
+  games           String?
+  funnyMoments    String?
+  lessonsLearned  String?
+  mood            String?
+  rating          Float?
+  heroImageUrl    String?
+  description     String?
+  route           String?
+  travelNotes     String?
+  musicPlaylist   String?
+  drivingTime     String?
+  nearbyAttractions String?
+
+  friends   PicnicFriend[]
+  photos    Photo[]
+  stories   Story[]
+  expenses  Expense[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([year])
+}
+
+model PicnicFriend {
+  id       String @id @default(cuid())
+  picnicId String
+  friendId String
+  role     String @default("member")
+
+  picnic Picnic @relation(fields: [picnicId], references: [id], onDelete: Cascade)
+  friend Friend @relation(fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([picnicId, friendId])
+}
+
+model Photo {
+  id          String   @id @default(cuid())
+  url         String
+  thumbnailUrl String?
+  caption     String?
+  year        Int?
+  location    String?
+  category    String?
+  tags        String   @default("[]")
+  isFavorite  Boolean  @default(false)
+  width       Int?
+  height      Int?
+  order       Int      @default(0)
+  albumId String?
+  album   Album?  @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  picnicId String?
+  picnic   Picnic?  @relation(fields: [picnicId], references: [id], onDelete: SetNull)
+  friendId String?
+  friend   Friend?  @relation(fields: [friendId], references: [id], onDelete: SetNull)
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  year      Int?
+  mood      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  picnicId String?
+  picnic   Picnic?  @relation(fields: [picnicId], references: [id], onDelete: SetNull)
+  friendId String?
+  friend   Friend?  @relation(fields: [friendId], references: [id], onDelete: SetNull)
+}
+
+model Expense {
+  id          String  @id @default(cuid())
+  category    String
+  description String
+  amount      Float
+
+  picnicId String
+  picnic   Picnic  @relation(fields: [picnicId], references: [id], onDelete: Cascade)
+}
+
+model GuestbookEntry {
+  id        String   @id @default(cuid())
+  name      String
+  message   String
+  emoji     String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+
+  reactions GuestbookReaction[]
+}
+
+model GuestbookReaction {
+  id             String @id @default(cuid())
+  type           String
+  guestbookEntryId String
+
+  entry GuestbookEntry @relation(fields: [guestbookEntryId], references: [id], onDelete: Cascade)
+}
+
+model Quote {
+  id        String   @id @default(cuid())
+  text      String
+  author    String?
+  context   String?
+  year      Int?
+  createdAt DateTime @default(now())
+}
+
+model Album {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverUrl    String?
+  category    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  photos Photo[]
+}
+
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}

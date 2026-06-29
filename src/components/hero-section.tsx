@@ -16,11 +16,14 @@ export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    setIsLoaded(true);
+    const id = requestAnimationFrame(() => setIsLoaded(true));
     const interval = setInterval(() => {
       setCurrentBg(prev => (prev + 1) % heroImages.length);
     }, 8000);
-    return () => clearInterval(interval);
+    return () => {
+      cancelAnimationFrame(id);
+      clearInterval(interval);
+    };
   }, []);
 
   const scrollToTimeline = () => {
@@ -73,7 +76,7 @@ export default function HeroSection() {
               top: '-20px',
             }}
             animate={{
-              y: [0, window?.innerHeight ? window.innerHeight + 50 : 1000],
+              y: [0, typeof window !== 'undefined' ? window.innerHeight + 50 : 1000],
               x: [0, Math.sin(i * 2) * 80, Math.cos(i * 3) * 40],
               rotate: [0, 360],
               opacity: [0, 0.6, 0.6, 0],

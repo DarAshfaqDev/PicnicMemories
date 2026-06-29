@@ -169,7 +169,7 @@ export default function SearchSection() {
                 <Card key={r.id} className="border-border/50 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="p-3 flex items-center gap-3">
                     {r.imageUrl && (
-                      <img src={r.imageUrl} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                      <img src={r.imageUrl} alt={r.title} className="w-12 h-12 rounded-lg object-cover shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{r.title}</p>
